@@ -388,9 +388,11 @@ export async function activate(context: ExtensionContext): Promise<void> {
           mcpProvider,
         );
       }
+      console.log("ANSIBLEEEEEE")
 
       // Check if Lightspeed provider changed - refresh explorer panel and set apiEndpoint
       if (event.affectsConfiguration("ansible.lightspeed.provider")) {
+        console.log("CHANGEDDDDD CONFIGURATIONNNNNN")
         const config = workspace.getConfiguration("ansible.lightspeed");
         const provider = config.get<string>("provider");
 
@@ -406,6 +408,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
           configTarget = vscode.ConfigurationTarget.Global;
         }
 
+        console.log("CHNAGED PROVIDER")
+        console.log(provider)
         // Auto-set apiEndpoint based on provider type
         if (provider === "openai") {
           await config.update("apiEndpoint", OPENAI_API_ENDPOINT, configTarget);
@@ -439,7 +443,9 @@ export async function activate(context: ExtensionContext): Promise<void> {
         lightSpeedManager,
         pythonInterpreterManager,
       );
+      console.log("=== ABOUT TO CALL sendAnsibleMetadataTelemetry ===");
       metaData.sendAnsibleMetadataTelemetry();
+      console.log("=== FINISHED CALLING sendAnsibleMetadataTelemetry ===");
     }),
   );
 
@@ -921,6 +927,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
                 ...param, // Include all original fields
                 model:
                   extSettings.settings.lightSpeedService.modelName || undefined,
+                extensionVersion: context.extension.packageJSON.version,
               },
             );
           } catch (error) {
@@ -1279,6 +1286,9 @@ async function updateAnsibleStatusBar(
   lightSpeedManager: LightSpeedManager,
   pythonInterpreterManager: PythonInterpreterManager,
 ) {
+  console.log("=== updateAnsibleStatusBar called ===");
+  console.log("Active file:", window.activeTextEditor?.document.fileName);
+  console.log("Language ID:", window.activeTextEditor?.document.languageId);
   await metaData.updateAnsibleInfoInStatusbar();
   await lightSpeedManager.statusBarProvider.updateLightSpeedStatusbar();
   await pythonInterpreterManager.updatePythonInfoInStatusbar();
