@@ -469,8 +469,6 @@ export class WebviewMessageHandlers {
   }
 
   private async handleExplanationThumbsUp(message: any) {
-    console.log("THUMBS UP MESSAGE DATA")
-    console.log(message)
     await thumbsUpDown(
       message.data.action ?? ThumbsUpDownAction.UP,
       message.data.explanationId,

@@ -136,8 +136,6 @@ export class TelemetryManager {
     if (errorMessage) {
       startUpData.set("error", errorMessage);
     }
-    console.log("StartUP Telemetry")
-    console.log(startUpData)
     await sendTelemetry(
       this.telemetryService,
       this.isTelemetryInit,

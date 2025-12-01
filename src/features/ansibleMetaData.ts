@@ -68,15 +68,11 @@ export class MetadataManager {
    * in the statusbar hovering action
    */
   public async updateAnsibleInfoInStatusbar(): Promise<void> {
-    console.log("[ansibleMetadata] updateAnsibleInfoInStatusbar called");
-    console.log("[ansibleMetadata] Active file languageId:", window.activeTextEditor?.document.languageId);
     if (window.activeTextEditor?.document.languageId !== "ansible") {
-      console.log("[ansibleMetadata] Not an Ansible file - skipping metadata fetch");
       this.metadataStatusBarItem.hide();
       return;
     }
 
-    console.log("[ansibleMetadata] Fetching Ansible metadata...");
     await this.updateAnsibleInfo();
   }
 
@@ -96,9 +92,7 @@ export class MetadataManager {
     this.client.onNotification(
       new NotificationType(`update/ansible-metadata`),
       (ansibleMetaDataList: any) => {
-        console.log("[ansibleMetadata] Received metadata from language server");
         this.ansibleMetaData = formatAnsibleMetaData(ansibleMetaDataList[0]);
-        console.log("[ansibleMetadata] ansibleMetaData is now populated:", !!this.ansibleMetaData);
         if (this.ansibleMetaData.ansiblePresent) {
           console.log("Ansible found in the workspace");
           this.cachedAnsibleVersion =
@@ -142,10 +136,7 @@ export class MetadataManager {
   }
 
   public async sendAnsibleMetadataTelemetry(): Promise<void> {
-    console.log("[ansibleMetadata] sendAnsibleMetadataTelemetry called");
-    console.log("[ansibleMetadata] ansibleMetaData exists?", !!this.ansibleMetaData);
     if (!this.ansibleMetaData) {
-      console.log("[ansibleMetadata] Returning early - ansibleMetaData is not available yet");
       return;
     }
     // Extract ansibleVersion and pythonVersion safely
@@ -186,13 +177,6 @@ export class MetadataManager {
         "prevAnsibleMetadataEvent",
       );
     // send telemetry event only when ansible metadata changes
-    console.log("[ansibleMetadata] Current provider:", this.currentAnsibleMetaEventData.lightSpeedProvider);
-    console.log("[ansibleMetadata] Previous provider:", this.previousAnsibleMetaEventData?.lightSpeedProvider);
-    console.log("[ansibleMetadata] compareObjects result:", compareObjects(
-      this.currentAnsibleMetaEventData,
-      this.previousAnsibleMetaEventData,
-    ));
-    
     if (
       ansibleVersion &&
       pythonVersion &&
@@ -202,7 +186,6 @@ export class MetadataManager {
       )
     ) {
       console.log("Sending ansibleMetadata telemetry event");
-      console.log(this.currentAnsibleMetaEventData)
       await sendTelemetry(
         this.telemetry.telemetryService,
         this.telemetry.isTelemetryInit,

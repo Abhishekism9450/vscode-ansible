@@ -57,7 +57,7 @@
     "**/out": true
   },
   "mochaExplorer.cwd": "packages/ansible-language-server",
-  "redhat.telemetry.enabled": true,
+  "redhat.telemetry.enabled": false,
   "search.exclude": {
     ".vscode-test": true
   }
