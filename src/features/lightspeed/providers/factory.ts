@@ -1,5 +1,6 @@
 import { LLMProvider } from "./base";
 import { GoogleProvider, GoogleConfig } from "./google";
+import { RHCustomProvider, RHCustomConfig } from "./rhcustom";
 import { LightSpeedServiceSettings } from "../../../interfaces/extensionSettings";
 import {
   GOOGLE_API_ENDPOINT,
@@ -48,6 +49,39 @@ export class LLMProviderFactory implements ProviderFactory {
           timeout: config.timeout || 30000,
           baseUrl: customEndpoint,
         } as GoogleConfig);
+      }
+
+      case "rhcustom": {
+        if (!config.apiKey || config.apiKey.trim() === "") {
+          throw new Error(
+            "API Key is required for Red Hat Custom. Please set it in the provider settings.",
+          );
+        }
+        if (!config.modelName || config.modelName.trim() === "") {
+          throw new Error(
+            "Model name is required for Red Hat Custom. Please set it in the provider settings.",
+          );
+        }
+        if (!config.apiEndpoint || config.apiEndpoint.trim() === "") {
+          throw new Error(
+            "API endpoint is required for Red Hat Custom. Please set it in the provider settings.",
+          );
+        }
+        const maxTokens =
+          typeof config.maxTokens === "number"
+            ? config.maxTokens
+            : config.maxTokens !== undefined &&
+                config.maxTokens !== null &&
+                String(config.maxTokens).trim() !== ""
+              ? parseInt(String(config.maxTokens).trim(), 10)
+              : undefined;
+        return new RHCustomProvider({
+          apiKey: config.apiKey,
+          modelName: config.modelName,
+          baseURL: config.apiEndpoint.trim().replace(/\/+$/, ""),
+          timeout: config.timeout || 30000,
+          maxTokens,
+        } as RHCustomConfig);
       }
 
       default:
@@ -114,6 +148,52 @@ export class LLMProviderFactory implements ProviderFactory {
             placeholder: "gemini-2.5-flash",
             description:
               "The Gemini model to use (optional, defaults to gemini-2.5-flash)",
+          },
+        ],
+      },
+      {
+        type: "rhcustom",
+        name: "rhcustom",
+        displayName: "Red Hat Custom",
+        description:
+          "Custom OpenAI-compatible API endpoint (e.g., self-hosted or enterprise)",
+        defaultEndpoint: "",
+        defaultModel: undefined,
+        usesOAuth: false,
+        requiresApiKey: true,
+        configSchema: [
+          {
+            key: "apiEndpoint",
+            label: "API Endpoint",
+            type: "string",
+            required: true,
+            placeholder: "https://your-api.example.com",
+            description: "Base URL of your custom deployment",
+          },
+          {
+            key: "apiKey",
+            label: "API Key",
+            type: "password",
+            required: true,
+            placeholder: "",
+            description: "Your API key for the custom endpoint",
+          },
+          {
+            key: "modelName",
+            label: "Model Name",
+            type: "string",
+            required: true,
+            placeholder: "my-model",
+            description: "The model name to use",
+          },
+          {
+            key: "maxTokens",
+            label: "Max Tokens",
+            type: "number",
+            required: false,
+            placeholder: "1600",
+            description:
+              "Maximum tokens per response (optional, defaults to 1600)",
           },
         ],
       },

@@ -4,7 +4,10 @@ import { SettingsManager } from "../../../../settings";
 import { providerFactory } from "../../providers/factory";
 import { ProviderManager } from "../../providerManager";
 import { LlmProviderSettings } from "../../llmProviderSettings";
-import { LightSpeedCommands } from "../../../../definitions/lightspeed";
+import {
+  LightSpeedCommands,
+  ProviderType,
+} from "../../../../definitions/lightspeed";
 import { LightspeedUser } from "../../lightspeedUser";
 import { QuickLinksWebviewViewProvider } from "../../../quickLinks/utils/quickLinksViewProvider";
 import { ProviderInfo } from "../../../../interfaces/lightspeed";
@@ -328,6 +331,10 @@ export class LlmProviderMessageHandlers {
         providerType,
         "apiEndpoint",
       );
+      const maxTokensStr = await this.llmProviderSettings.get(
+        providerType,
+        "maxTokens",
+      );
 
       if (providerInfo?.requiresApiKey && !apiKey) {
         return {
@@ -341,11 +348,12 @@ export class LlmProviderMessageHandlers {
       const apiEndpoint = storedEndpoint || "";
 
       const provider = providerFactory.createProvider(
-        providerType as "google",
+        providerType as ProviderType,
         {
           apiKey,
           modelName,
           apiEndpoint,
+          maxTokens: Number.isNaN(maxTokens) ? undefined : maxTokens,
           enabled: true,
           provider: providerType,
           timeout: 30000,
