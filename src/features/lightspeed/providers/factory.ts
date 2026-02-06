@@ -156,7 +156,7 @@ export class LLMProviderFactory implements ProviderFactory {
         name: "rhcustom",
         displayName: "Red Hat Custom",
         description:
-          "Custom OpenAI-compatible API endpoint (e.g., self-hosted or enterprise)",
+          "Connect to custom OpenAI-compatible RHAI models",
         defaultEndpoint: "",
         defaultModel: undefined,
         usesOAuth: false,
