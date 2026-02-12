@@ -346,6 +346,9 @@ export class LlmProviderMessageHandlers {
 
       // Use stored endpoint as-is (allows custom endpoints, v2, proxies, etc.)
       const apiEndpoint = storedEndpoint || "";
+      const maxTokens = maxTokensStr?.trim()
+        ? parseInt(maxTokensStr, 10)
+        : undefined;
 
       const provider = providerFactory.createProvider(
         providerType as ProviderType,
