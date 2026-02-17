@@ -74,11 +74,12 @@ export class LLMProviderFactory implements ProviderFactory {
                 config.maxTokens !== null &&
                 String(config.maxTokens).trim() !== ""
               ? parseInt(String(config.maxTokens).trim(), 10)
-              : undefined;
+              : 1600;
+        const baseURL = config.apiEndpoint.trim().replace(/\/+$/, "");
         return new RHCustomProvider({
           apiKey: config.apiKey,
           modelName: config.modelName,
-          baseURL: config.apiEndpoint.trim().replace(/\/+$/, ""),
+          baseURL,
           timeout: config.timeout || 30000,
           maxTokens,
         } as RHCustomConfig);
